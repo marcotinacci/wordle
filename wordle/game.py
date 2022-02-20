@@ -9,9 +9,7 @@ class Wordle:
         self.guesses = []
         self.feedback = []
         self.words = load_words(filename)
-        self._secret = (
-            secret if secret is not None else random.choice(self.words)
-        )
+        self._secret = secret if secret is not None else random.choice(self.words)
 
     def guess(self, guess: str) -> str:
         self.guesses.append(guess)

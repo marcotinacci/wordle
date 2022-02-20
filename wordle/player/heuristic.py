@@ -1,13 +1,8 @@
 import logging
 from typing import Callable, Dict, List, Tuple
 
+from wordle.config import MAX_ATTEMPTS, SYMBOL_MATCH, SYMBOL_MISPLACED, SYMBOL_MISS
 from wordle.game import Wordle
-from wordle.config import (
-    SYMBOL_MATCH,
-    SYMBOL_MISPLACED,
-    SYMBOL_MISS,
-    MAX_ATTEMPTS,
-)
 
 
 def predicate(word: str, guesses: List[str], feedback: List[str]) -> bool:
@@ -69,8 +64,7 @@ class HeuristicPlayer:
                 logging.error("No candidates left")
                 logging.info("Word not found: %s", self.game.get_secret())
                 return guesses, feedback
-            else:
-                logging.debug("Candidates left: %d", len(self.candidates))
+            logging.debug("Candidates left: %d", len(self.candidates))
 
             best_guess = self.best_guess()
 
@@ -84,9 +78,7 @@ class HeuristicPlayer:
                 return guesses, feedback
 
             # NOTE: the sorting by value is preserved after filtering
-            self.candidates = filter_candidates(
-                self.candidates, guesses, feedback
-            )
+            self.candidates = filter_candidates(self.candidates, guesses, feedback)
 
         logging.info("Word not found: %s", self.game.get_secret())
         return guesses, feedback

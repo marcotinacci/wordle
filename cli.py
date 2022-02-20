@@ -13,7 +13,8 @@ def main():
     """Console script for wordle."""
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
-    game = Wordle(filename=str(Path(__file__).parent / "data/words_cfreshman.txt"))
+    game = Wordle(
+        filename=str(Path(__file__).parent / "data/words_cfreshman.txt"))
     player = HeuristicPlayer(game)
     player.play()
 
