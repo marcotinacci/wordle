@@ -1,4 +1,3 @@
-
 import logging
 from typing import List, Tuple
 
@@ -32,7 +31,7 @@ class Player:
             if fb == SYMBOL_MATCH * 5:
                 logging.info("Found the word: %s", g)
                 return guesses, feedback
-            
+
             self.strategy.update(g, fb)
             pass
 

@@ -1,4 +1,3 @@
-import logging
 from typing import List
 
 from wordle.config import SYMBOL_MATCH, SYMBOL_MISPLACED, SYMBOL_MISS

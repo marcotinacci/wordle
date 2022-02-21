@@ -36,7 +36,9 @@ class HeuristicStrategy(Strategy):
         Strategy.update(self, guess, feedback)
 
         # NOTE: the order is preserved after filtering
-        self.candidates = filter_candidates(self.candidates, self.guesses, self.feedback)
+        self.candidates = filter_candidates(
+            self.candidates, self.guesses, self.feedback
+        )
 
     @staticmethod
     def metric(occurrences: Dict[str, int]) -> Callable[[str], int]:
@@ -47,7 +49,7 @@ class HeuristicStrategy(Strategy):
             return val
 
         return value
-    
+
     @staticmethod
     def build_occurrences(words: List[str]) -> Dict[str, int]:
         occurrences = {}
