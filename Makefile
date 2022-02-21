@@ -52,6 +52,7 @@ test-all: ## run tests on every Python version with tox
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source ${PROJECT_DIR} -m pytest
 	coverage report -m
+	coverage xml -o coverage.xml
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
