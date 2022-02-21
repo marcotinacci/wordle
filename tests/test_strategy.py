@@ -1,9 +1,19 @@
 import unittest
 
-from wordle.player.heuristic import is_candidate
+from wordle.player.utils import evaluate_feedback, is_candidate
 
 
 class TestStrategyMethods(unittest.TestCase):
+
+    def test_evaluate_feedback(self):
+        self.assertEqual(evaluate_feedback("house", "house"), "XXXXX")
+        self.assertEqual(evaluate_feedback("house", "wrong"), "__?__")
+        self.assertEqual(evaluate_feedback("abide", "speed"), "__?_?")
+        self.assertEqual(evaluate_feedback("erase", "speed"), "?_??_")
+        self.assertEqual(evaluate_feedback("steal", "speed"), "X_X__")
+        self.assertEqual(evaluate_feedback("crepe", "speed"), "_?X?_")
+        self.assertEqual(evaluate_feedback("pearl", "eerie"), "_X?__")
+        self.assertEqual(evaluate_feedback("talon", "salsa"), "_XX__")
 
     def test_is_candidate(self):
         self.assertTrue(is_candidate("house", ["house"], ["XXXXX"]))
@@ -16,6 +26,7 @@ class TestStrategyMethods(unittest.TestCase):
         self.assertFalse(is_candidate("steal", ["speed"], ["X_X?_"]))
         self.assertTrue(is_candidate("crepe", ["speed"], ["_?X?_"]))
         self.assertFalse(is_candidate("crepe", ["speed"], ["_?X__"]))
+        self.assertFalse(is_candidate("rinse", ["eerie"], ["????X"]))
 
     def test_is_candidate_history(self):
         self.assertTrue(is_candidate(

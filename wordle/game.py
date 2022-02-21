@@ -1,7 +1,7 @@
 import random
 
 from wordle.gameloader import load_words
-from wordle.config import SYMBOL_MATCH, SYMBOL_MISPLACED, SYMBOL_MISS
+from wordle.player.utils import evaluate_feedback
 
 
 class Wordle:
@@ -17,15 +17,7 @@ class Wordle:
         return self.feedback[-1]
 
     def evaluate(self, guess: str) -> str:
-        feedback = ""
-        for idx, letter in enumerate(guess):
-            if letter == self._secret[idx]:
-                feedback += SYMBOL_MATCH
-            elif letter in self._secret:
-                feedback += SYMBOL_MISPLACED
-            else:
-                feedback += SYMBOL_MISS
-        return feedback
+        return evaluate_feedback(self._secret, guess)
 
     def get_secret(self):
         return self._secret
