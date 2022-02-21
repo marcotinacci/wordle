@@ -5,25 +5,59 @@ from wordle.config import MAX_ATTEMPTS, SYMBOL_MATCH, SYMBOL_MISPLACED, SYMBOL_M
 from wordle.game import Wordle
 
 
-def predicate(word: str, guesses: List[str], feedback: List[str]) -> bool:
+def is_candidate(word: str, guesses: List[str], feedback: List[str]) -> bool:
     """Return if the word is a valid candidate given the history of guesses
     and feedback."""
 
-    for i, _ in enumerate(guesses):
+    for i, guess in enumerate(guesses):
+
+        # check SYMBOL_MATCH
         for j, letter in enumerate(word):
-            if feedback[i][j] == SYMBOL_MATCH and letter != guesses[i][j]:
+            if feedback[i][j] == SYMBOL_MATCH and letter != guess[j]:
                 return False
-            if feedback[i][j] == SYMBOL_MISS and letter in guesses[i]:
-                return False
-            if feedback[i][j] == SYMBOL_MISPLACED and letter == guesses[i][j]:
-                return False
+
+        # check SYMBOL_MISPLACED and SYMBOL_MISS
+        word_indexes = {}
+        for guess_index, guess_letter in enumerate(guess):
+            if feedback[i][guess_index] not in (SYMBOL_MISPLACED, SYMBOL_MISS):
+                continue
+            # check and set the letter index on the word
+            if guess_letter not in word_indexes:
+                word_indexes[guess_letter] = -1
+            word_index = word_indexes[guess_letter] + 1
+
+            # cycle on the word until we find a new misplaced match
+            while word_index < len(word):
+                if (
+                    # check if letter is found
+                    word[word_index] == guess_letter
+                    # skip if in the same position
+                    and word_index != guess_index
+                    # check it's not another match
+                    and guess[word_index] != guess_letter
+                ):
+                    if feedback[i][guess_index] == SYMBOL_MISPLACED:
+                        word_indexes[guess_letter] = word_index
+                        break
+                    # else feedback element is SYMBOL_MISS
+                    return False
+                word_index += 1
+            else:
+                # if the match is not found feedback isn't compatible with the word
+                if feedback[i][guess_index] == SYMBOL_MISPLACED:
+                    return False
+                # else feedback element is SYMBOL_MISS
+                # track the index out of bound, so that other istances of the same letter
+                # will fail or succeed, respectively if misplaced or missing
+                word_indexes[guess_letter] = word_index
+
     return True
 
 
 def filter_candidates(
     candidates: List[str], guesses: List[str], feedback: List[str]
 ) -> List[str]:
-    return list(filter(lambda w: predicate(w, guesses, feedback), candidates))
+    return list(filter(lambda w: is_candidate(w, guesses, feedback), candidates))
 
 
 def build_occurrences(words: List[str]) -> Dict[str, int]:
