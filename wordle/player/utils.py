@@ -48,6 +48,7 @@ def is_candidate(word: str, guesses: List[str], feedback: List[str]) -> bool:
             return False
     return True
 
+
 def filter_candidates(
     candidates: List[str], guesses: List[str], feedback: List[str]
 ) -> List[str]:
