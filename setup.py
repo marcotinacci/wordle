@@ -21,5 +21,5 @@ setup(
     packages=find_packages(include=['wordle', 'wordle.*']),
     test_suite='tests',
     url='https://github.com/marcotinacci/wordle',
-    version='0.2.0',
+    version='0.3.0',
 )
