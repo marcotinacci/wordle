@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from wordle.game import Wordle
+from wordle.utils import load_words
 from wordle.player.strategy import HeuristicStrategy
 from wordle.player.player import Player
 
@@ -13,9 +14,8 @@ from wordle.player.player import Player
 def main():
     """Console script for wordle."""
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-
-    game = Wordle(filename=str(Path(__file__).parent / "data/words_cfreshman.txt"))
-    player = Player(game, HeuristicStrategy(game.words))
+    words = load_words(str(Path(__file__).parent / "data/words_cfreshman.txt"))
+    player = Player(Wordle(words=words), HeuristicStrategy(words))
     player.play()
 
     return 0

@@ -1,9 +1,10 @@
 import unittest
 
-from wordle.player.utils import evaluate_feedback, is_candidate
+from wordle.player.utils import (evaluate_feedback, filter_candidates,
+                                 is_candidate)
 
 
-class TestStrategyMethods(unittest.TestCase):
+class TestPlayerUtils(unittest.TestCase):
 
     def test_evaluate_feedback(self):
         self.assertEqual(evaluate_feedback("house", "house"), "XXXXX")
@@ -51,3 +52,22 @@ class TestStrategyMethods(unittest.TestCase):
             guesses=[],
             feedback=[],
         ))
+    
+    def test_filter_candidates(self):
+
+        self.assertEqual(
+            filter_candidates(
+                candidates=["aaaaa", "bbbbb", "acccc"],
+                guesses=["abbbb"],
+                feedback=["X____"],
+            ),
+            ["aaaaa", "acccc"],
+        )
+        self.assertEqual(
+            filter_candidates(
+                candidates=["aaaaa", "bbbbb", "acccc"],
+                guesses=["abccc"],
+                feedback=["X____"],
+            ),
+            ["aaaaa"],
+        )

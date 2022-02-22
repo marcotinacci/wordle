@@ -3,12 +3,6 @@ from typing import List
 from wordle.config import SYMBOL_MATCH, SYMBOL_MISPLACED, SYMBOL_MISS
 
 
-def filter_candidates(
-    candidates: List[str], guesses: List[str], feedback: List[str]
-) -> List[str]:
-    return list(filter(lambda word: is_candidate(word, guesses, feedback), candidates))
-
-
 def evaluate_feedback(word: str, guess: str) -> str:
     feedback = []
     word_indexes = {}
@@ -53,3 +47,8 @@ def is_candidate(word: str, guesses: List[str], feedback: List[str]) -> bool:
         if evaluate_feedback(word, guess) != feedback[i]:
             return False
     return True
+
+def filter_candidates(
+    candidates: List[str], guesses: List[str], feedback: List[str]
+) -> List[str]:
+    return list(filter(lambda word: is_candidate(word, guesses, feedback), candidates))

@@ -1,15 +1,13 @@
-from abc import abstractmethod, ABC
 from typing import Callable, Dict, List
 
 from wordle.player.utils import filter_candidates
 
 
-class Strategy(ABC):
+class Strategy:
     def __init__(self):
         self.guesses = []
         self.feedback = []
 
-    @abstractmethod
     def guess(self) -> str:
         raise NotImplementedError
 
@@ -18,7 +16,6 @@ class Strategy(ABC):
         self.feedback.append(feedback)
 
 
-@Strategy.register
 class HeuristicStrategy(Strategy):
     def __init__(self, words: List[str]):
         Strategy.__init__(self)
