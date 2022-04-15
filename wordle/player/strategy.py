@@ -1,6 +1,6 @@
 from typing import Callable, Dict, List
 
-from wordle.player.utils import filter_candidates
+from wordle.player.utils import evaluate_feedback, filter_candidates
 
 
 class Strategy:
@@ -58,6 +58,38 @@ class HeuristicStrategy(Strategy):
                     occurrences[letter] = 1
         return occurrences
 
+
+class MinMaxStrategy(Strategy):
+    def __init__(self, words: List[str]):
+        Strategy.__init__(self)
+        self.candidates = words
+
+    def guess(self) -> str:
+        if not self.candidates:
+            raise StrategyError("No candidates left")
+        
+        best_score = float("inf")
+        best_guess = None
+        for guess in self.candidates:
+            counter = dict()
+            for target in self.candidates:
+                f = evaluate_feedback(target, guess)
+                counter[f] = counter.setdefault(f, 0) + 1
+                if counter[f] > best_score:
+                    break
+            score = max(counter.values())
+            if score < best_score:
+                best_score = score
+                best_guess = guess
+
+        return best_guess
+
+    def update(self, guess: str, feedback: str):
+        Strategy.update(self, guess, feedback)
+
+        self.candidates = filter_candidates(
+            self.candidates, self.guesses, self.feedback
+        )
 
 class StrategyError(Exception):
     pass
