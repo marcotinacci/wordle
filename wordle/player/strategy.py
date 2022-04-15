@@ -15,6 +15,10 @@ class Strategy:
         self.guesses.append(guess)
         self.feedback.append(feedback)
 
+    @staticmethod
+    def evaluate_feedback(word: str, guess: str) -> str:
+        return evaluate_feedback(word, guess)
+
 
 class HeuristicStrategy(Strategy):
     def __init__(self, words: List[str]):
@@ -60,6 +64,7 @@ class HeuristicStrategy(Strategy):
 
 
 class MinMaxStrategy(Strategy):
+
     def __init__(self, words: List[str]):
         Strategy.__init__(self)
         self.candidates = words
@@ -73,7 +78,7 @@ class MinMaxStrategy(Strategy):
         for guess in self.candidates:
             counter = dict()
             for target in self.candidates:
-                f = evaluate_feedback(target, guess)
+                f = self.evaluate_feedback(target, guess)
                 counter[f] = counter.setdefault(f, 0) + 1
                 if counter[f] > best_score:
                     break
@@ -90,6 +95,13 @@ class MinMaxStrategy(Strategy):
         self.candidates = filter_candidates(
             self.candidates, self.guesses, self.feedback
         )
+
+    def evaluate_feedback(self, word: str, guess: str) -> str:
+        if hasattr(self, "feedback_matrix"):
+            return self.feedback_matrix[word][guess]
+        return evaluate_feedback(word, guess)
+
+
 
 class StrategyError(Exception):
     pass

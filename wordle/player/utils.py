@@ -1,6 +1,14 @@
-from typing import List
+from typing import Dict, List
 
 from wordle.config import SYMBOL_MATCH, SYMBOL_MISPLACED, SYMBOL_MISS
+
+def precompute_feedback(words: List[str], guesses: List[str]) -> Dict[str, Dict[str, str]]:
+    feedback = dict()
+    for word in words:
+        feedback[word] = dict()
+        for guess in guesses:
+            feedback[word][guess] = evaluate_feedback(word, guess)
+    return feedback
 
 
 def evaluate_feedback(word: str, guess: str) -> str:
