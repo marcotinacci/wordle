@@ -28,15 +28,15 @@ class Player:
             guesses.append(g)
             feedback.append(fb)
 
-            logging.info("guess %d: %s -> %s", i, g, fb)
+            logging.debug("guess %d: %s -> %s", i, g, fb)
 
             if fb == SYMBOL_MATCH * 5:
-                logging.info("Found the word: %s", g)
+                logging.debug("Found the word: %s", g)
                 return guesses, feedback
 
             self._strategy.update(g, fb)
 
-        logging.info("Word not found: %s", self._game.get_secret())
+        logging.debug("Word not found: %s", self._game.get_secret())
         return guesses, feedback
 
     def guess(self) -> str:
