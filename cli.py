@@ -10,8 +10,9 @@ from typing import List
 
 from wordle.game import Wordle
 from wordle.utils import load_words
-from wordle.player.strategy import HeuristicStrategy, MinMaxStrategy, Strategy
+from wordle.player.strategy import HeuristicStrategy, MinMaxStrategy, PrecomputedStrategy, Strategy
 from wordle.player.player import Player
+from wordle.player.utils import precompute_feedback
 
 
 def main():
@@ -19,10 +20,30 @@ def main():
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     words = load_words(str(Path(__file__).parent / "data/words_cfreshman.txt"))
 
-    words = words[0:10000:100]
-    print(words)
-    simulation(HeuristicStrategy, words)
-    simulation(MinMaxStrategy, words)
+    # logging.info("precomputing feedback")
+    # MinMaxStrategy.feedback_matrix = precompute_feedback(words, words)
+
+    # words = words[:100]
+    strategy = PrecomputedStrategy(words, MinMaxStrategy(words))
+
+    print(strategy._decision_tree.guess)
+    print(strategy._decision_tree.choice.keys())
+
+    for secret in words:
+        player = Player(Wordle(words=words, secret=secret), strategy)
+        start = time()
+        guesses, feedback = player.play()
+        execution_time = time() - start
+        result = {
+            "secret": secret,
+            "guesses": guesses,
+            "feedback": feedback,
+            "execution_time": execution_time,
+        }
+        print(result)
+
+    # simulation(HeuristicStrategy, words)
+    # simulation(MinMaxStrategy, words)
     return 0
 
 def simulation(strategy: Strategy, words: List[str]):

@@ -1,10 +1,15 @@
-from typing import Callable, Dict, List
+import logging
+from typing import Dict, List, Callable
+from progress.bar import Bar
 
-from wordle.player.utils import evaluate_feedback, filter_candidates
+from wordle.player.utils import evaluate_feedback, filter_candidates, precompute_feedback
 
 
 class Strategy:
     def __init__(self):
+        self.setup()
+
+    def setup(self):
         self.guesses = []
         self.feedback = []
 
@@ -20,12 +25,60 @@ class Strategy:
         return evaluate_feedback(word, guess)
 
 
+class PrecomputedStrategy(Strategy):
+
+    class DecisionTree:
+        def __init__(self, guess: str, choice: Dict[str, "PrecomputedStrategy.DecisionTree"]):
+            self.guess = guess
+            self.choice = choice
+
+    @staticmethod
+    def _precompute(words: List[str], strategy: Strategy) -> DecisionTree:
+        logging.info("precomputing %s", strategy.__class__.__name__)
+        # tree root
+        guess = strategy.guess()
+        choice = dict()
+        with Bar(strategy.__class__.__name__, max=len(words)) as bar:
+            for target in words:
+                feedback = evaluate_feedback(target, guess)
+                # TODO implement strategy.run instead
+                strategy.setup()
+                strategy.update(guess, feedback)
+                choice[feedback] = PrecomputedStrategy.DecisionTree(
+                    strategy.guess(), dict()
+                )
+                bar.next()
+        return PrecomputedStrategy.DecisionTree(guess, choice)
+
+    def __init__(self, words: List[str], strategy: Strategy):
+        super().__init__()
+        self._decision_tree = self._precompute(words, strategy)
+
+    def guess(self) -> str:
+        if self._decision_tree is None:
+            raise StrategyError("no options available")
+        return self._decision_tree.guess
+    
+    def update(self, guess: str, feedback: str):
+        if guess != self._decision_tree.guess:
+            raise StrategyError("guess does not match")
+        if feedback not in self._decision_tree.choice:
+            raise StrategyError("unexpected feedback %s", feedback)
+        self._decision_tree = self._decision_tree.choice[feedback]
+
+
 class HeuristicStrategy(Strategy):
+
     def __init__(self, words: List[str]):
+        self.words = words
         Strategy.__init__(self)
-        self.occurrences = HeuristicStrategy.build_occurrences(words)
+
+    def setup(self):
+        super().setup()
+        self.occurrences = HeuristicStrategy.build_occurrences(self.words)
         self.candidates = sorted(
-            words, key=HeuristicStrategy.metric(self.occurrences), reverse=True
+            self.words,
+            key=HeuristicStrategy.metric(self.occurrences), reverse=True
         )
 
     def guess(self) -> str:
@@ -66,8 +119,13 @@ class HeuristicStrategy(Strategy):
 class MinMaxStrategy(Strategy):
 
     def __init__(self, words: List[str]):
+        self.words = words
         Strategy.__init__(self)
-        self.candidates = words
+
+    def setup(self):
+        super().setup()
+
+        self.candidates = self.words[:]
 
     def guess(self) -> str:
         if not self.candidates:
