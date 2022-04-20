@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 from wordle.config import MAX_ATTEMPTS, SYMBOL_MATCH
 from wordle.game import Wordle
-from wordle.player.strategy import Strategy, StrategyError
+from wordle.strategy import Strategy, StrategyError
 
 
 class Player:
@@ -11,7 +11,7 @@ class Player:
         if game is None or strategy is None:
             raise ValueError("game and strategy cannot be None")
         self._game = game
-        self._strategy = strategy
+        self.strategy = strategy
 
     def play(self) -> Tuple[List[str], List[str]]:
         guesses = []
@@ -19,7 +19,7 @@ class Player:
         for i in range(MAX_ATTEMPTS):
 
             try:
-                g = self._strategy.guess()
+                g = self.strategy.guess()
             except StrategyError as e:
                 logging.error(e)
                 break
@@ -34,10 +34,10 @@ class Player:
                 logging.debug("Found the word: %s", g)
                 return guesses, feedback
 
-            self._strategy.update(g, fb)
+            self.strategy.update(g, fb)
 
         logging.debug("Word not found: %s", self._game.get_secret())
         return guesses, feedback
 
     def guess(self) -> str:
-        return self._strategy.guess()
+        return self.strategy.guess()

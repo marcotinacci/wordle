@@ -1,3 +1,4 @@
+import functools
 from typing import Dict, List
 
 from wordle.config import SYMBOL_MATCH, SYMBOL_MISPLACED, SYMBOL_MISS
@@ -10,7 +11,7 @@ def precompute_feedback(words: List[str], guesses: List[str]) -> Dict[str, Dict[
             feedback[word][guess] = evaluate_feedback(word, guess)
     return feedback
 
-
+@functools.cache
 def evaluate_feedback(word: str, guess: str) -> str:
     feedback = []
     word_indexes = {}

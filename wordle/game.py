@@ -1,7 +1,7 @@
 import random
 from typing import List
 
-from wordle.player.utils import evaluate_feedback
+from wordle.strategy.utils import evaluate_feedback
 
 
 class Wordle:
