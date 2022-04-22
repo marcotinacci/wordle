@@ -16,6 +16,7 @@ class Player:
     def play(self) -> Tuple[List[str], List[str]]:
         guesses = []
         feedback = []
+        self.strategy.reset()
         for i in range(MAX_ATTEMPTS):
 
             try:
@@ -38,6 +39,3 @@ class Player:
 
         logging.debug("Word not found: %s", self._game.get_secret())
         return guesses, feedback
-
-    def guess(self) -> str:
-        return self.strategy.guess()

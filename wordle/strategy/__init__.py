@@ -8,7 +8,8 @@ class Strategy:
 
     def __init__(self, dictionary: List[str]):
         self.dictionary = dictionary
-        self.reset()
+        self.guesses = []
+        self.feedback = []
 
     def guess(self) -> str:
         raise NotImplementedError
