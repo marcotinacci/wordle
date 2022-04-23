@@ -6,6 +6,10 @@ from wordle.strategy import Strategy, StrategyError
 
 class HeuristicStrategy(Strategy):
 
+    def __init__(self, dictionary: List[str]):
+        super().__init__(dictionary)
+        self.reset()
+
     def reset(self):
         super().reset()
         self.occurrences = build_occurrences(self.candidates)

@@ -1,5 +1,6 @@
 import json
 from typing import Dict, List
+from os.path import exists
 
 from wordle.config import SYMBOL_MATCH, MAX_ATTEMPTS
 from wordle.strategy import Strategy, StrategyError
@@ -62,6 +63,8 @@ class PrecomputedStrategy(Strategy):
             self._current_subtree = self._decision_tree
         elif filename is not None:
             super().__init__([])
+            if not exists(filename):
+                raise ValueError("file {} does not exist".format(filename))
             content = json.loads(open(filename, "r").read())
             self.dictionary = content["dictionary"]
             self._decision_tree = build_tree_from_dict(content["decision_tree"])

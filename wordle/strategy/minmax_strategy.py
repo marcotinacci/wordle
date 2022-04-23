@@ -1,9 +1,14 @@
+from typing import List
 
 from wordle.strategy import Strategy, StrategyError
 from wordle.strategy.utils import evaluate_feedback
 
 
 class MinMaxStrategy(Strategy):
+
+    def __init__(self, dictionary: List[str]):
+        super().__init__(dictionary)
+        self.reset()
 
     def guess(self) -> str:
         if not self.candidates:
