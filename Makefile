@@ -1,4 +1,4 @@
-.PHONY: clean clean-build clean-pyc clean-test coverage format help lint lint/flake8 lint/black
+.PHONY: clean clean-temp clean-build clean-pyc clean-test coverage format help lint lint/flake8 lint/black
 .DEFAULT_GOAL := help
 
 PROJECT_DIR=wordle
@@ -44,7 +44,10 @@ coverage: ## check code coverage quickly with the default Python
 	coverage xml -o coverage.xml
 	coverage html
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-temp clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+
+clean-temp: ## remove temporary files
+	rm -fr temp/
 
 clean-build: ## remove build artifacts
 	rm -fr build/

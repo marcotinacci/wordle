@@ -23,11 +23,21 @@ from wordle.utils import load_words
 def cli():
     pass
 
+
 @cli.command()
 @click.option("--secret", "-s", help="Secret word.")
 @click.option("--strategy", "-S", default="heuristic", help="Strategy type to use.")
-@click.option("--dictionary", "-d", default="words_cfreshman.txt", help="Dictionary file.")
-@click.option("--precomputed", "-p", is_flag=True, show_default=True, default=False, help="Load a precomputed strategy.")
+@click.option(
+    "--dictionary", "-d", default="words_cfreshman.txt", help="Dictionary file."
+)
+@click.option(
+    "--precomputed",
+    "-p",
+    is_flag=True,
+    show_default=True,
+    default=False,
+    help="Load a precomputed strategy.",
+)
 def run(dictionary: str, secret: str, strategy: str, precomputed: bool) -> int:
     logging.basicConfig(stream=sys.stdout, level=LOG_LEVEL)
     words = load_words(DATA_ROOT / "dictionaries" / dictionary)
@@ -40,13 +50,15 @@ def run(dictionary: str, secret: str, strategy: str, precomputed: bool) -> int:
         logging.error(e)
         return 1
     for i, (g, f) in enumerate(zip(guesses, feedback)):
-        print("guess %d: %s => %s" % (i+1, g, f))
+        print("guess %d: %s => %s" % (i + 1, g, f))
     return 0
+
 
 def select_strategy(strategy: str, words: List[str], precomputed: bool) -> Strategy:
     if precomputed:
         PrecomputedStrategy(
-            filename=DATA_ROOT / "strategies" / "{}.json".format(strategy))
+            filename=DATA_ROOT / "strategies" / "{}.json".format(strategy)
+        )
     if strategy == "heuristic":
         return HeuristicStrategy(words)
     elif strategy == "minmax":
@@ -54,10 +66,13 @@ def select_strategy(strategy: str, words: List[str], precomputed: bool) -> Strat
     else:
         raise ValueError("unknown strategy: %s" % strategy)
 
+
 @cli.command()
 @click.argument("filename", type=str)
 @click.option("--strategy", "-S", default="heuristic", help="Strategy type to use.")
-@click.option("--dictionary", "-d", default="words_cfreshman.txt", help="Dictionary file.")
+@click.option(
+    "--dictionary", "-d", default="words_cfreshman.txt", help="Dictionary file."
+)
 def precompute(filename: str, strategy: str, dictionary: str) -> int:
     logging.basicConfig(stream=sys.stdout, level=LOG_LEVEL)
     words = load_words(DATA_ROOT / "dictionaries" / dictionary)
@@ -70,11 +85,21 @@ def precompute(filename: str, strategy: str, dictionary: str) -> int:
     precomputed_strategy.save(DATA_ROOT / "strategies" / "{}.json".format(filename))
     return 0
 
+
 @cli.command()
 @click.argument("history", type=str, nargs=-1)
 @click.option("--strategy", "-S", default="heuristic", help="Strategy type to use.")
-@click.option("--dictionary", "-d", default="words_cfreshman.txt", help="Dictionary file.")
-@click.option("--precomputed", "-p", is_flag=True, show_default=True, default=False, help="Load a precomputed strategy.")
+@click.option(
+    "--dictionary", "-d", default="words_cfreshman.txt", help="Dictionary file."
+)
+@click.option(
+    "--precomputed",
+    "-p",
+    is_flag=True,
+    show_default=True,
+    default=False,
+    help="Load a precomputed strategy.",
+)
 def play(history: List[str], strategy: str, dictionary: str, precomputed: bool) -> int:
     logging.basicConfig(stream=sys.stdout, level=LOG_LEVEL)
 
@@ -98,8 +123,17 @@ def play(history: List[str], strategy: str, dictionary: str, precomputed: bool) 
 @cli.command()
 @click.argument("strategy", type=str)
 @click.option("--sample", "-n", type=int, default=100, help="Sample size.")
-@click.option("--dictionary", "-d", default="words_cfreshman.txt", help="Dictionary file.")
-@click.option("--precomputed", "-p", is_flag=True, show_default=True, default=False, help="Run precomputed strategies.")
+@click.option(
+    "--dictionary", "-d", default="words_cfreshman.txt", help="Dictionary file."
+)
+@click.option(
+    "--precomputed",
+    "-p",
+    is_flag=True,
+    show_default=True,
+    default=False,
+    help="Run precomputed strategies.",
+)
 def benchmark(strategy: str, sample: int, dictionary: str, precomputed: bool) -> int:
 
     logging.basicConfig(stream=sys.stdout, level=LOG_LEVEL)
@@ -115,48 +149,61 @@ def benchmark(strategy: str, sample: int, dictionary: str, precomputed: bool) ->
             try:
                 guesses, feedback = player.play()
             except StrategyError as se:
-                results.append({
-                    "secret": secret,
-                    "status": "error",
-                    "message": str(se),
-                })
+                results.append(
+                    {
+                        "secret": secret,
+                        "status": "error",
+                        "message": str(se),
+                    }
+                )
                 continue
             finally:
                 bar.next()
             execution_time = time() - start
             player.strategy.reset()
-            results.append({
-                "secret": secret,
-                "guesses": guesses,
-                "feedback": feedback,
-                "execution_time": execution_time,
-                "status": "complete",
-            })
-
+            results.append(
+                {
+                    "secret": secret,
+                    "guesses": guesses,
+                    "feedback": feedback,
+                    "execution_time": execution_time,
+                    "status": "complete",
+                }
+            )
 
     complete_records = len([r for r in results if r["status"] == "complete"])
     if complete_records == 0:
         print("There are no complete records")
         return 0
 
-    print(tabulate([
-        ["metric", "value"],
-        [
-            "avg time",
-            sum(r["execution_time"] for r in results if r["status"] == "complete") /
-            len([r for r in results if r["status"] == "complete"])
-        ],
-        [
-            "avg guesses",
-            sum(len(r["guesses"]) for r in results if r["status"] == "complete") /
-            len([r for r in results if r["status"] == "complete"]),
-        ],
-        [
-            "errors number",
-            len([r for r in results if r["status"] == "error"]),
-        ],
-    ], headers="firstrow", tablefmt="grid"))
+    print(
+        tabulate(
+            [
+                ["metric", "value"],
+                [
+                    "avg time",
+                    sum(
+                        r["execution_time"]
+                        for r in results
+                        if r["status"] == "complete"
+                    )
+                    / len([r for r in results if r["status"] == "complete"]),
+                ],
+                [
+                    "avg guesses",
+                    sum(len(r["guesses"]) for r in results if r["status"] == "complete")
+                    / len([r for r in results if r["status"] == "complete"]),
+                ],
+                [
+                    "errors number",
+                    len([r for r in results if r["status"] == "error"]),
+                ],
+            ],
+            headers="firstrow",
+            tablefmt="grid",
+        )
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

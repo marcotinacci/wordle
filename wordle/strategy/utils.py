@@ -1,4 +1,3 @@
-
 from typing import List
 
 from wordle.utils import evaluate_feedback

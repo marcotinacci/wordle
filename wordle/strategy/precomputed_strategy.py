@@ -18,9 +18,9 @@ class DecisionTree:
             "choice": {
                 feedback: tree.to_dict() if tree is not None else None
                 for feedback, tree in self.choice.items()
-            }
+            },
         }
-    
+
 
 def build_tree_from_dict(d: Dict) -> DecisionTree:
     guess = d["guess"]
@@ -31,7 +31,9 @@ def build_tree_from_dict(d: Dict) -> DecisionTree:
     return DecisionTree(guess, choice)
 
 
-def build_tree(strategy: Strategy, guesses: List[str], feedback: List[str]) -> DecisionTree:
+def build_tree(
+    strategy: Strategy, guesses: List[str], feedback: List[str]
+) -> DecisionTree:
     if len(guesses) > MAX_ATTEMPTS:
         return None
     choice = dict()
@@ -54,13 +56,18 @@ def build_tree(strategy: Strategy, guesses: List[str], feedback: List[str]) -> D
 
     return DecisionTree(g, choice)
 
-class PrecomputedStrategy(Strategy):
 
-    def __init__(self, dictionary: List[str] = None, strategy: Strategy = None, filename: str = None):
+class PrecomputedStrategy(Strategy):
+    def __init__(
+        self,
+        dictionary: List[str] = None,
+        strategy: Strategy = None,
+        filename: str = None,
+    ):
         if strategy is not None and dictionary is not None:
             super().__init__(dictionary)
             self._decision_tree = build_tree(strategy, [], [])
-            self._current_subtree = self._decision_tree
+            self._reset()
         elif filename is not None:
             super().__init__([])
             if not exists(filename):
@@ -68,20 +75,20 @@ class PrecomputedStrategy(Strategy):
             content = json.loads(open(filename, "r").read())
             self.dictionary = content["dictionary"]
             self._decision_tree = build_tree_from_dict(content["decision_tree"])
-            self._current_subtree = self._decision_tree
+            self._reset()
         else:
             raise StrategyError("no strategy or filename given")
 
     def guess(self) -> str:
         if self._current_subtree is None:
             raise StrategyError("no options available")
-        
+
         tree = self._current_subtree
         for (g, f) in zip(self.guesses, self.feedback):
             if tree.guess != g:
                 raise StrategyError(
                     "guess %s does not match precomputed guess %s",
-                    tree.guess, 
+                    tree.guess,
                     g,
                 )
             tree = tree.choice[f]
@@ -91,18 +98,25 @@ class PrecomputedStrategy(Strategy):
         if guess != self._current_subtree.guess:
             raise StrategyError("guess does not match")
         if feedback not in self._current_subtree.choice:
-            print(self.guesses)
-            print(self.feedback)
             raise StrategyError("unexpected feedback %s", feedback)
         self._current_subtree = self._current_subtree.choice[feedback]
 
     def reset(self):
         super().reset()
+        self._reset()
+    
+    def _reset(self):
         self._current_subtree = self._decision_tree
 
     def save(self, filename: str):
         with open(filename, "w") as f:
-            f.write(json.dumps({
-                "decision_tree": self._decision_tree.to_dict(),
-                "dictionary": self.dictionary,
-            }, indent=2, sort_keys=True))
+            f.write(
+                json.dumps(
+                    {
+                        "decision_tree": self._decision_tree.to_dict(),
+                        "dictionary": self.dictionary,
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
