@@ -83,8 +83,9 @@ def precompute(filename: str, strategy: str, dictionary: str) -> int:
         logging.error(e)
         return 1
     
-    with open(DATA_ROOT / "strategies" / "{}.json".format(filename), "w") as f:
-        f.write(precomputed_strategy.json(), 'w')
+    filename = DATA_ROOT / "strategies" / "{}.json".format(filename)
+    with open(filename, "w", encoding="utf8") as f:
+        f.write(precomputed_strategy.json())
 
     return 0
 
