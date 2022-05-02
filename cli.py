@@ -82,7 +82,10 @@ def precompute(filename: str, strategy: str, dictionary: str) -> int:
     except StrategyError as e:
         logging.error(e)
         return 1
-    precomputed_strategy.save(DATA_ROOT / "strategies" / "{}.json".format(filename))
+    
+    with open(DATA_ROOT / "strategies" / "{}.json".format(filename), "w") as f:
+        f.write(precomputed_strategy.json(), 'w')
+
     return 0
 
 
@@ -105,7 +108,7 @@ def play(history: List[str], strategy: str, dictionary: str, precomputed: bool) 
 
     rounds = len(history) / 2
     if rounds > MAX_ATTEMPTS or len(history) % 2 != 0:
-        logging.error("arguments must be <= 2 * %d" % MAX_ATTEMPTS)
+        logging.error("arguments must be <= 2 * %d", MAX_ATTEMPTS)
         return 1
 
     guesses = [g for i, g in enumerate(history) if i % 2 == 0]

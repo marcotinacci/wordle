@@ -1,0 +1,20 @@
+{
+  "decision_tree": {
+    "guess": "aaaaa",
+    "choice": {
+      "X____": {
+        "guess": "abbbb",
+        "choice": {}
+      },
+      "XX___": {
+        "guess": "aabbb",
+        "choice": {}
+      }
+    }
+  },
+  "dictionary": [
+    "aaaaa",
+    "abbbb",
+    "aabbb"
+  ]
+}

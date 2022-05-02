@@ -1,5 +1,5 @@
 import functools
-from typing import Dict, List
+from typing import List
 
 from wordle.config import SYMBOL_MATCH, SYMBOL_MISPLACED, SYMBOL_MISS
 
@@ -9,17 +9,6 @@ def load_words(filename: str) -> List[str]:
         words = file.read().splitlines()
         words = list(filter(lambda w: len(w) == 5, words))
     return words
-
-
-def precompute_feedback(
-    words: List[str], guesses: List[str]
-) -> Dict[str, Dict[str, str]]:
-    feedback = dict()
-    for word in words:
-        feedback[word] = dict()
-        for guess in guesses:
-            feedback[word][guess] = evaluate_feedback(word, guess)
-    return feedback
 
 
 @functools.cache
