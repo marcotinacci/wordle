@@ -26,7 +26,7 @@ class TestPlayer(unittest.TestCase):
         player = Player(game=self.game, strategy=self.strategy)
         guesses, _ = player.play()
         self.assertEqual(guesses[-1], self.game.get_secret())
-    
+
     def test_player_loses(self):
         strategy = Strategy([])
         strategy.guess = MagicMock(return_value="bbbbb")

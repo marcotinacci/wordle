@@ -82,7 +82,7 @@ def precompute(filename: str, strategy: str, dictionary: str) -> int:
     except StrategyError as e:
         logging.error(e)
         return 1
-    
+
     filename = DATA_ROOT / "strategies" / "{}.json".format(filename)
     with open(filename, "w", encoding="utf8") as f:
         f.write(precomputed_strategy.json())
@@ -123,6 +123,7 @@ def play(history: List[str], strategy: str, dictionary: str, precomputed: bool) 
         logging.error(e)
         return 1
     return 0
+
 
 @cli.command()
 @click.argument("strategy", type=str)

@@ -1,13 +1,12 @@
 import json
 import unittest
-from unittest.mock import MagicMock
 from pathlib import Path
 
-from wordle.config import DATA_ROOT
 from wordle.strategy import Strategy, StrategyError
 from wordle.strategy.heuristic_strategy import HeuristicStrategy
 from wordle.strategy.minmax_strategy import MinMaxStrategy
-from wordle.strategy.precomputed_strategy import PrecomputedStrategy, DecisionTree, build_tree_from_dict, build_tree
+from wordle.strategy.precomputed_strategy import (
+    PrecomputedStrategy, DecisionTree, build_tree_from_dict, build_tree)
 from wordle.utils import load_words
 
 DATA_ROOT = Path(__file__).parent.parent / "data"
@@ -18,7 +17,6 @@ class TestStrategy(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
         self.dictionary = load_words(DATA_ROOT / "words_test.txt")
-
 
     def test_strategy(self):
         s = Strategy(["aaaaa"])
@@ -64,7 +62,7 @@ class TestStrategy(unittest.TestCase):
         self.assertEqual(s.candidates, ["aaaaa"])
 
         s.update("aaaaa", "XXXXX")
-        
+
         s = MinMaxStrategy(words)
         s.update("aaaaa", "_____")
         self.assertEqual(s.candidates, [])
@@ -106,7 +104,9 @@ class TestStrategy(unittest.TestCase):
         with self.assertRaises(StrategyError) as cm:
             s.set_history(guesses=["zzzzz"], feedback=["_____"])
 
-        self.assertEqual(cm.exception.args[0], "guess zzzzz does not match precomputed guess aaaaa")
+        self.assertEqual(
+            cm.exception.args[0],
+            "guess zzzzz does not match precomputed guess aaaaa")
 
     def test_precomputed_heuristic_from_file(self):
         filename = DATA_ROOT / "strategy_test.json"
@@ -118,7 +118,6 @@ class TestStrategy(unittest.TestCase):
         s.update("aaaaa", "X____")
         self.assertEqual(s.guess(), "abbbb")
 
-
     def test_precomputed_file_not_found(self):
         filename = DATA_ROOT / "doesnt_exist.json"
         with self.assertRaises(FileNotFoundError):
@@ -126,7 +125,7 @@ class TestStrategy(unittest.TestCase):
 
     def test_non_existing_strategy(self):
         with self.assertRaises(StrategyError):
-            s = PrecomputedStrategy()
+            PrecomputedStrategy()
 
     def test_decision_tree(self):
         tree = DecisionTree("aaaaa", {
@@ -153,7 +152,7 @@ class TestStrategy(unittest.TestCase):
     def test_build_tree(self):
         tree = build_tree(Strategy([]), ["aaaaa"] * 7, ["_____"] * 7)
         self.assertIsNone(tree)
-    
+
     def test_build_tree_from_dict(self):
         d = {
             "guess": "aaaaa",
