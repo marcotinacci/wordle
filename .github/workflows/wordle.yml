@@ -6,29 +6,29 @@ on:
 
 jobs:
   tests:
-    name: "Python ${{ matrix.python-version }}"
+    name: Python ${{ matrix.py }}
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        python-version: ["3.9", "3.10"]
+        py: ["3.9", "3.10"]
 
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
-    - name: Python versions
-      uses: "actions/setup-python@v2"
+    - name: Set up Python ${{ matrix.py }}
+      uses: actions/setup-python@v2
       with:
-        python-version: "${{ matrix.python-version }}"
+        python-version: ${{ matrix.py }}
     - name: Install dependencies
       run: make init
     - name: Check code style
       run: make lint
     - name: Test with tox
-      run: make test-all PY="${{ matrix.python-version }}"
+      run: make test-all PY=${{ matrix.py }}
     - name: Coverage report
       run: make coverage
-    - name: "Upload coverage to Codecov"
-      uses: "codecov/codecov-action@v2"
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
       with:
         fail_ci_if_error: true
