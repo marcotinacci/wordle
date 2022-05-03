@@ -3,6 +3,7 @@
 
 PROJECT_DIR=wordle
 TESTS_DIR=tests
+PY = py310
 
 define PRINT_HELP_PYSCRIPT
 import re, sys
@@ -37,7 +38,7 @@ test: ## run tests quickly with the default Python
 	pytest
 
 test-all: ## run tests on every Python version with tox
-	tox
+	@tox -e $(PY) $(OPTIONS)
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source ${PROJECT_DIR} -m pytest

@@ -5,7 +5,8 @@ on:
   - pull_request
 
 jobs:
-  build:
+  tests:
+    name: "Python ${{ matrix.python-version }}"
     runs-on: ubuntu-latest
 
     strategy:
@@ -24,6 +25,10 @@ jobs:
     - name: Check code style
       run: make lint
     - name: Test with tox
-      run: make test-all
+      run: make test-all PY="${{ matrix.python-version }}"
     - name: Coverage report
       run: make coverage
+    - name: "Upload coverage to Codecov"
+      uses: "codecov/codecov-action@v2"
+      with:
+        fail_ci_if_error: true
