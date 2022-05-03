@@ -20,6 +20,7 @@ help:
 
 init: ## install dependencies
 	pip install -r requirements.txt
+	pip install -r requirements_dev.txt
 
 format: ## format code with black
 	black ${PROJECT_DIR}
@@ -36,7 +37,7 @@ test: ## run tests quickly with the default Python
 	pytest
 
 test-all: ## run tests on every Python version with tox
-	tox
+	@tox
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source ${PROJECT_DIR} -m pytest

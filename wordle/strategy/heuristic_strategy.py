@@ -11,7 +11,7 @@ class HeuristicStrategy(Strategy):
     def reset(self):
         super().reset()
         self._reset()
-    
+
     def _reset(self):
         self.occurrences = build_occurrences(self.dictionary)
         self.candidates = sorted(

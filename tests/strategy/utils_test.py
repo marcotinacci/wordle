@@ -52,7 +52,7 @@ class TestPlayerUtils(unittest.TestCase):
             guesses=[],
             feedback=[],
         ))
-    
+
     def test_filter_candidates(self):
 
         self.assertEqual(

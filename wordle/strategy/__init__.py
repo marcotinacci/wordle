@@ -7,7 +7,9 @@ class Strategy:
     def __init__(self, dictionary: List[str]):
         self.dictionary = dictionary
         self.candidates = self.dictionary
-        self.set_history([], [])
+        self.guesses = []
+        self.feedback = []
+        self._filter_candidates()
 
     def guess(self) -> str:
         raise NotImplementedError
