@@ -88,8 +88,10 @@ class PrecomputedStrategy(Strategy):
         for (g, f) in zip(guesses, feedback):
             if self._current_subtree.guess != g:
                 raise StrategyError(
-                    (f"guess {g} does not match precomputed guess "
-                        f"{self._current_subtree.guess}")
+                    (
+                        f"guess {g} does not match precomputed guess "
+                        f"{self._current_subtree.guess}"
+                    )
                 )
             self._current_subtree = self._current_subtree.choice[f]
 
