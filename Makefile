@@ -20,6 +20,7 @@ help:
 
 init: ## install dependencies
 	pip install -r requirements.txt
+	pip install -r requirements_dev.txt
 
 format: ## format code with black
 	black ${PROJECT_DIR}
