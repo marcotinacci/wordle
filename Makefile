@@ -1,4 +1,4 @@
-.PHONY: clean clean-build clean-pyc clean-test coverage format help lint lint/flake8 lint/black
+.PHONY: clean clean-temp clean-build clean-pyc clean-test coverage format help lint lint/flake8 lint/black
 .DEFAULT_GOAL := help
 
 PROJECT_DIR=wordle
@@ -20,6 +20,7 @@ help:
 
 init: ## install dependencies
 	pip install -r requirements.txt
+	pip install -r requirements_dev.txt
 
 format: ## format code with black
 	black ${PROJECT_DIR}
@@ -36,7 +37,7 @@ test: ## run tests quickly with the default Python
 	pytest
 
 test-all: ## run tests on every Python version with tox
-	tox
+	@tox
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source ${PROJECT_DIR} -m pytest
@@ -44,7 +45,10 @@ coverage: ## check code coverage quickly with the default Python
 	coverage xml -o coverage.xml
 	coverage html
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-temp clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+
+clean-temp: ## remove temporary files
+	rm -fr temp/
 
 clean-build: ## remove build artifacts
 	rm -fr build/

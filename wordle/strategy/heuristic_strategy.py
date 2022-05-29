@@ -1,14 +1,19 @@
-
 from typing import Callable, Dict, List
 
 from wordle.strategy import Strategy, StrategyError
 
 
 class HeuristicStrategy(Strategy):
+    def __init__(self, dictionary: List[str]):
+        super().__init__(dictionary)
+        self._reset()
 
     def reset(self):
         super().reset()
-        self.occurrences = build_occurrences(self.candidates)
+        self._reset()
+
+    def _reset(self):
+        self.occurrences = build_occurrences(self.dictionary)
         self.candidates = sorted(
             self.dictionary,
             key=metric(self.occurrences),

@@ -1,14 +1,15 @@
-
 from typing import List
 
 from wordle.strategy.utils import filter_candidates
 
 
 class Strategy:
-
     def __init__(self, dictionary: List[str]):
         self.dictionary = dictionary
-        self.reset()
+        self.candidates = self.dictionary
+        self.guesses = []
+        self.feedback = []
+        self._filter_candidates()
 
     def guess(self) -> str:
         raise NotImplementedError
@@ -26,13 +27,12 @@ class Strategy:
         self.guesses = guesses
         self.feedback = feedback
         self._filter_candidates()
-    
+
     def _filter_candidates(self):
         self.candidates = filter_candidates(
-            self.candidates,
-            self.guesses,
-            self.feedback
+            self.candidates, self.guesses, self.feedback
         )
+
 
 class StrategyError(Exception):
     pass
