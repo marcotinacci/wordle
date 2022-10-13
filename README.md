@@ -62,3 +62,7 @@ encoded as a string of the following characters:
 * `_`: incorrect letter
 * `.`: correct letter, wrong position
 * `X`: correct letter, correct position
+
+# Acknowledgments
+
+Thanks to @lostella for the always constructive conversations (that I'm missing), and to @davideboschetto and @albertoguiggiani for the laughs. 
